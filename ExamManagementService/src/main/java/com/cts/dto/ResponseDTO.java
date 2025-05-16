@@ -13,6 +13,7 @@ public class ResponseDTO {
 	private Long responseId;
 	private Long examId;
 	private Long userId;
+	private String emailId;
 	private Long questionId;
 	private String answer;
 	private int marksObtained;

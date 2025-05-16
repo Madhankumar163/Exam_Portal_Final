@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.cts.client.AnalyticsClient;
@@ -24,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ExamServiceImpl implements ExamService {
 
+	@Autowired
+	private JavaMailSender javaMailSender;
 	@Autowired
 	private final ExamRepository examRepository;
 	@Autowired
@@ -89,6 +93,7 @@ public class ExamServiceImpl implements ExamService {
 		Response response = new Response();
 		response.setExamId(dto.getExamId());
 		response.setUserId(dto.getUserId());
+		response.setEmailId(dto.getEmailId());
 		response.setQuestionId(dto.getQuestionId());
 		response.setAnswer(dto.getAnswer());
 		response.setMarksObtained(marks);
@@ -96,7 +101,10 @@ public class ExamServiceImpl implements ExamService {
 		Response saved = responseRepository.save(response);
 		dto.setResponseId(saved.getResponseId());
 		dto.setMarksObtained(marks);
+		String subject="exam status";
+		String body="exam completed";
 
+		sendEmail(dto.getEmailId(),subject,body);
 		// Generate report
 		ReportDTO reportDTO = new ReportDTO();
 		reportDTO.setExamId(dto.getExamId());
@@ -138,5 +146,19 @@ public class ExamServiceImpl implements ExamService {
 		}
 
 		return totalMarks;
+
+	}
+
+
+
+	public String sendEmail(String to, String subject, String body) {
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(to);
+		message.setSubject(subject);
+		message.setText(body);
+
+		javaMailSender.send(message);
+		return "final";
+
 	}
 }

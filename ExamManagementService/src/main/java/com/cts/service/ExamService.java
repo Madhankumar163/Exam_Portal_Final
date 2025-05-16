@@ -15,6 +15,8 @@ public interface ExamService {
 	void deleteExam(Long id);
 
 	ResponseDTO submitResponse(ResponseDTO dto);
+	
+	
 
 	List<ResponseDTO> getUserResponses(Long userId, Long examId);
 
